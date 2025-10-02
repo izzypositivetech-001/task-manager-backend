@@ -8,7 +8,7 @@ import bcrypt from "bcryptjs"
 
 const getUsers = async (req, res) => {
     try {
-        const user = await User.find({ role: 'member' }).select("-password");
+        const users = await User.find({ role: 'member' }).select("-password");
 
         //Add task counts to each user
         const UserWithTaskCounts = await Promise.all(users.map(async (user) => {
@@ -35,22 +35,14 @@ const getUsers = async (req, res) => {
 
 const getUserById = async (req, res) => {
     try {
-        
+        const user = await User.findById(req.params.id).select("-password");
+        if (!user) return res.status(404).json({ message: "User not found"});
+         res.json(user);
     } catch (error) {
         res.status(500).json({ message: "Server error", error: error.message })
     }
 };
 
-//@desc Delete a user (Admin only)
-//@route Delete /api/users/:id
-//@access Private (Admin)
 
-const deleteUser = async (req, res) => {
-    try {
-        
-    } catch (error) {
-        res.status(500).json({ message: "Server error", error: error.message})
-    }
-}
 
-export  { getUsers, getUserById, deleteUser}
+export  { getUsers, getUserById}

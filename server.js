@@ -37,14 +37,14 @@ app.use(express.json());
 // Routes
 import authRoutes from "./routes/authRoutes.js";
 import usersRoutes from "./routes/userRoutes.js";
-// import tasksRoutes from "./routes/tasks.js";
-// import reportsRoutes from "./routes/reports.js";
+import tasksRoutes from "./routes/taskRoutes.js";
+import reportRoutes from "./routes/reportRoutes.js";
 
 
 app.use("/api/auth", authRoutes);
 app.use("/api/users", usersRoutes);
-// app.use("/api/tasks", tasksRoutes);
-// app.use("/api/reports", reportsRoutes);
+app.use("/api/tasks", tasksRoutes);
+app.use("/api/reports", reportRoutes);
 
 // Start Server
 const PORT = process.env.PORT || 5000;
