@@ -102,7 +102,7 @@ const exportUserReport = async (req, res) => {
             {
                 header: "In Progress Tasks",
                  key: "inProgressTasks",
-                 width: 20
+                 width: 20, 
             },
             {header: "Completed Tasks", key: "completedTasks", width: 20},
         ];
