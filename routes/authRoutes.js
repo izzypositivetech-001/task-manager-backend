@@ -2,6 +2,8 @@ import express from "express";
 import {
   getUserProfile,
   loginUser,
+  logoutUser,
+  refreshToken,
   registerUser,
   updateUserProfile,
 } from "../controller/authController.js";
@@ -13,8 +15,17 @@ const router = express.Router();
 // Auth Routes
 router.post("/register", registerUser);
 router.post("/login", loginUser);
+router.post("/refresh", refreshToken);
+router.post("/logout", protect, logoutUser);
 router.get("/profile", protect, getUserProfile);
 router.put("/profile", protect, updateUserProfile);
+
+router.get("/protected", protect, (req, res) => {
+  res.json({
+    message: "Access granted to protected route", 
+    user: req.user,
+  });
+});
 
 router.post("/upload-image", upload.single("image"), (req, res) => {
   if (!req.file) {
