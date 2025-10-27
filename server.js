@@ -19,12 +19,6 @@ connectDB();
 
 const app = express();
 
-// Compression middleware to reduce response payload sizes
-app.use(compression());
-
-// Serve uploaded files statically
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
-
 // Middleware to handle CORS
 
 const allowedOrigins = [
@@ -43,6 +37,21 @@ app.use(
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
+
+app.use((req, res, next) => {
+  console.log("🟢 Request from:", req.headers.origin);
+  next();
+});
+
+
+// ✅ Handle preflight requests explicitly (important for Vercel)
+app.options("*", cors());
+
+// Compression middleware to reduce response payload sizes
+app.use(compression());
+
+// Serve uploaded files statically
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Middleware
 app.use(express.json());
