@@ -11,21 +11,21 @@ dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Connect to DB
+// ✅ Connect to DB
 connectDB();
 
 const app = express();
 
 // ✅ Updated CORS setup
 const allowedOrigins = [
-  "https://task-manager-client-virid.vercel.app", // Your frontend on Vercel
-  "http://localhost:5173", // Local dev
+  "https://task-manager-client-virid.vercel.app", // Frontend (Vercel)
+  "http://localhost:5173", // Local development
 ];
 
 app.use(
   cors({
     origin: function (origin, callback) {
-      if (!origin) return callback(null, true); // allow mobile or Postman
+      if (!origin) return callback(null, true); // Allow tools like Postman or mobile
       if (allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
@@ -42,10 +42,10 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 
-// Static uploads
+// ✅ Static uploads
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// Routes
+// ✅ Import routes
 import authRoutes from "./routes/authRoutes.js";
 import usersRoutes from "./routes/userRoutes.js";
 import tasksRoutes from "./routes/taskRoutes.js";
@@ -56,11 +56,10 @@ app.use("/api/users", usersRoutes);
 app.use("/api/tasks", tasksRoutes);
 app.use("/api/reports", reportRoutes);
 
-// ✅ Default health route
+// ✅ Health route for testing
 app.get("/", (req, res) => {
-  res.json({ message: "Server running fine ✅" });
+  res.json({ message: "✅ Task Manager Backend running fine on Vercel!" });
 });
 
-// Server listen (Vercel handles port)
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
+// ❌ Remove app.listen() — Vercel handles this automatically
+export default app;
