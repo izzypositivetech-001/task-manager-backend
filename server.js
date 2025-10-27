@@ -3,7 +3,7 @@ app.use(
     origin: function (origin, callback) {
       const allowedOrigins = [
         "http://localhost:5173", // local frontend
-        "https://task-manager-backend-sandy-pi.vercel.app", // your deployed frontend
+        "https://task-manager-client-virid.vercel.app/", // your deployed frontend
       ];
 
       if (!origin || allowedOrigins.includes(origin)) {
