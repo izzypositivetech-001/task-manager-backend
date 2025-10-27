@@ -1,5 +1,4 @@
 import express from "express";
-import compression from "compression";
 import cors from "cors";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -7,56 +6,44 @@ import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import connectDB from "./config/db.js";
 
+dotenv.config();
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Load environment variables
-dotenv.config();
-
-// Connect Database
-
+// Connect to DB
 connectDB();
 
 const app = express();
 
-// Middleware to handle CORS
-
+// ✅ Updated CORS setup
 const allowedOrigins = [
-  "https://task-manager-client-virid.vercel.app", // ✅ your frontend
-  "http://localhost:5173" // ✅ for local dev (optional)
+  "https://task-manager-client-virid.vercel.app", // Your frontend on Vercel
+  "http://localhost:5173", // Local dev
 ];
 
 app.use(
   cors({
-    origin: [
-      "http://localhost:5173", // local dev
-      "https://task-manager-client-virid.vercel.app", // ✅ deployed frontend
-    ],
-    credentials: true, // allow cookies / tokens
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    origin: function (origin, callback) {
+      if (!origin) return callback(null, true); // allow mobile or Postman
+      if (allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        console.log(`❌ Blocked by CORS: ${origin}`);
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
-app.use((req, res, next) => {
-  console.log("🟢 Request from:", req.headers.origin);
-  next();
-});
-
-
-// ✅ Handle preflight requests explicitly (important for Vercel)
-app.options("*", cors());
-
-// Compression middleware to reduce response payload sizes
-app.use(compression());
-
-// Serve uploaded files statically
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
-
-// Middleware
 app.use(express.json());
-// Cookie parser (required to read cookies like the refresh token)
 app.use(cookieParser());
+
+// Static uploads
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Routes
 import authRoutes from "./routes/authRoutes.js";
@@ -69,9 +56,11 @@ app.use("/api/users", usersRoutes);
 app.use("/api/tasks", tasksRoutes);
 app.use("/api/reports", reportRoutes);
 
-//Serve uploads folder
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+// ✅ Default health route
+app.get("/", (req, res) => {
+  res.json({ message: "Server running fine ✅" });
+});
 
-// Start Server
+// Server listen (Vercel handles port)
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`server is running on port ${PORT} 😁😒`));
+app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
