@@ -26,6 +26,12 @@ app.use(compression());
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Middleware to handle CORS
+
+const allowedOrigins = [
+  "https://task-manager-client-virid.vercel.app", // ✅ your frontend
+  "http://localhost:5173" // ✅ for local dev (optional)
+];
+
 app.use(
   cors({
     origin: [
